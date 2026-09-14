@@ -23,6 +23,7 @@
     --brass: #B8935F;
     --brass-dim: #8A6D48;
     --sage: #7A9B7E;
+    --rust: #B0654A;
     --line: rgba(237, 230, 214, 0.14);
     --text-primary: #EDE6D6;
     --text-secondary: rgba(237, 230, 214, 0.56);
@@ -74,6 +75,14 @@
     font-weight: 500;
   }
 
+  .title-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 10px;
+  }
+
   h1 {
     font-family: 'Fraunces', serif;
     font-optical-sizing: auto;
@@ -82,7 +91,26 @@
     line-height: 1.05;
     letter-spacing: -0.01em;
     color: var(--parchment);
-    margin-bottom: 10px;
+  }
+
+  .edit-toggle {
+    background: none;
+    border: 1px solid var(--line);
+    color: var(--text-secondary);
+    font-family: 'Work Sans', sans-serif;
+    font-size: 12.5px;
+    font-weight: 500;
+    padding: 7px 13px;
+    border-radius: 20px;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: all 0.2s ease;
+  }
+
+  .edit-toggle.active {
+    color: var(--ink);
+    background: var(--brass);
+    border-color: var(--brass);
   }
 
   .subhead {
@@ -133,23 +161,35 @@
   .row {
     display: flex;
     align-items: center;
-    gap: 14px;
+    gap: 12px;
     padding: 16px 0;
     border-bottom: 1px solid var(--line);
+    background: var(--ink);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+  }
+
+  .row.dragging {
+    opacity: 0.4;
+  }
+
+  .row-tap {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex: 1;
+    min-width: 0;
     cursor: pointer;
     background: none;
-    border-left: none;
-    border-right: none;
-    width: 100%;
+    border: none;
     text-align: left;
     color: inherit;
     font: inherit;
+    padding: 0;
     -webkit-appearance: none;
     appearance: none;
-    transition: opacity 0.2s ease;
   }
 
-  .row:active {
+  .row-tap:active {
     opacity: 0.6;
   }
 
@@ -232,12 +272,182 @@
     transform: scale(1);
   }
 
+  /* Edit mode controls */
+  .row-edit-controls {
+    display: none;
+    align-items: center;
+    gap: 2px;
+    flex-shrink: 0;
+  }
+
+  .row.edit-mode .row-edit-controls {
+    display: flex;
+  }
+
+  .row.edit-mode .row-check {
+    display: none;
+  }
+
+  .order-btns {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+  }
+
+  .order-btn {
+    width: 26px;
+    height: 18px;
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+  }
+
+  .order-btn:active {
+    background: var(--ink-soft);
+    color: var(--brass);
+  }
+
+  .order-btn:disabled {
+    opacity: 0.25;
+    cursor: default;
+  }
+
+  .order-btn svg {
+    width: 13px;
+    height: 13px;
+  }
+
+  .remove-btn {
+    width: 30px;
+    height: 30px;
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    margin-left: 4px;
+    flex-shrink: 0;
+  }
+
+  .remove-btn:active {
+    background: rgba(176, 101, 74, 0.18);
+    color: var(--rust);
+  }
+
+  .remove-btn svg {
+    width: 15px;
+    height: 15px;
+  }
+
+  /* Drag handle */
+  .drag-handle {
+    display: none;
+    width: 20px;
+    height: 30px;
+    flex-shrink: 0;
+    color: var(--text-secondary);
+    cursor: grab;
+    align-items: center;
+    justify-content: center;
+    touch-action: none;
+  }
+
+  .row.edit-mode .drag-handle {
+    display: flex;
+  }
+
+  .drag-handle svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  /* Add game form */
+  .add-form {
+    display: none;
+    flex-direction: column;
+    gap: 10px;
+    padding: 18px 0 6px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .add-form.show {
+    display: flex;
+  }
+
+  .add-form input {
+    background: var(--ink-soft);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 12px 14px;
+    color: var(--parchment);
+    font-family: 'Work Sans', sans-serif;
+    font-size: 15px;
+    outline: none;
+  }
+
+  .add-form input:focus {
+    border-color: var(--brass-dim);
+  }
+
+  .add-form input::placeholder {
+    color: var(--text-secondary);
+  }
+
+  .add-form-row {
+    display: flex;
+    gap: 8px;
+  }
+
+  .add-btn {
+    background: var(--brass);
+    border: none;
+    color: var(--ink);
+    font-family: 'Work Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 12px;
+    border-radius: 10px;
+    cursor: pointer;
+    margin-top: 2px;
+  }
+
+  .add-btn:active {
+    background: var(--brass-dim);
+  }
+
+  .add-error {
+    font-size: 12.5px;
+    color: var(--rust);
+    display: none;
+  }
+
+  .add-error.show {
+    display: block;
+  }
+
+  .empty-state {
+    padding: 40px 0;
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: 14px;
+  }
+
   /* Footer */
   .footer {
     margin-top: 40px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
   }
 
   .reset-btn {
@@ -275,7 +485,10 @@
         <span class="date" id="date"></span>
         <span class="streak" id="streak"></span>
       </div>
-      <h1>Daily Geo</h1>
+      <div class="title-row">
+        <h1>Daily Geo</h1>
+        <button class="edit-toggle" id="editToggle">Edit list</button>
+      </div>
       <p class="subhead">Today's route through the map games. Tap one to open it, come back and check it off.</p>
     </header>
 
@@ -284,6 +497,15 @@
         <div class="progress-fill" id="progressFill"></div>
       </div>
       <div class="progress-label" id="progressLabel"></div>
+    </div>
+
+    <div class="add-form" id="addForm">
+      <div class="add-form-row">
+        <input type="text" id="addName" placeholder="Game name (e.g. Tradle)">
+      </div>
+      <input type="url" id="addUrl" placeholder="URL (e.g. https://worldle.teuteuf.fr)">
+      <span class="add-error" id="addError">Enter a name and a valid URL.</span>
+      <button class="add-btn" id="addSubmit">Add game</button>
     </div>
 
     <div class="manifest" id="manifest"></div>
@@ -295,19 +517,51 @@
   </div>
 
 <script>
-  // ---- Configure your games here ----
-  const GAMES = [
-    { name: "OEC Tradle",  domain: "oec.world",           url: "https://oec.world/en/tradle" },
-    { name: "Worldle",     domain: "worldle.teuteuf.fr",  url: "https://worldle.teuteuf.fr" },
-    { name: "GeoGuessr",   domain: "geoguessr.com",       url: "https://www.geoguessr.com" },
-    { name: "Reborder",    domain: "reborder.app",        url: "https://reborder.app" },
-    { name: "MapTap.gg",   domain: "maptap.gg",           url: "https://maptap.gg" },
-    { name: "travle",      domain: "travle.earth",        url: "https://travle.earth" },
-    { name: "GeoGrid",     domain: "geogridgame.com",     url: "https://www.geogridgame.com" },
-    { name: "EthnoGuessr", domain: "hbd.gg",              url: "https://hbd.gg" }
+  // ---- Default games (used only the first time, before any edits are saved) ----
+  const DEFAULT_GAMES = [
+    { id: "oec-world",           name: "OEC Tradle",  domain: "oec.world",           url: "https://oec.world/en/tradle" },
+    { id: "worldle-teuteuf-fr",  name: "Worldle",     domain: "worldle.teuteuf.fr",  url: "https://worldle.teuteuf.fr" },
+    { id: "geoguessr-com",       name: "GeoGuessr",   domain: "geoguessr.com",       url: "https://www.geoguessr.com" },
+    { id: "reborder-app",        name: "Reborder",    domain: "reborder.app",        url: "https://reborder.app" },
+    { id: "maptap-gg",           name: "MapTap.gg",   domain: "maptap.gg",           url: "https://maptap.gg" },
+    { id: "travle-earth",        name: "travle",      domain: "travle.earth",        url: "https://travle.earth" },
+    { id: "geogridgame-com",     name: "GeoGrid",     domain: "geogridgame.com",     url: "https://www.geogridgame.com" },
+    { id: "hbd-gg",              name: "EthnoGuessr", domain: "hbd.gg",              url: "https://hbd.gg" }
   ];
 
+  const GAMES_KEY = "dailygeo_games";
   const STORAGE_KEY = "dailygeo_progress";
+
+  function loadGames() {
+    try {
+      const raw = JSON.parse(localStorage.getItem(GAMES_KEY));
+      if (Array.isArray(raw) && raw.length) return raw;
+    } catch (e) {}
+    return DEFAULT_GAMES.slice();
+  }
+
+  function saveGames(games) {
+    localStorage.setItem(GAMES_KEY, JSON.stringify(games));
+  }
+
+  let GAMES = loadGames();
+
+  function makeId(url) {
+    try {
+      const domain = new URL(url).hostname.replace(/^www\./, "");
+      return domain.replace(/[^a-z0-9]/gi, "-").toLowerCase() + "-" + Date.now().toString(36).slice(-4);
+    } catch (e) {
+      return "game-" + Date.now().toString(36);
+    }
+  }
+
+  function domainOf(url) {
+    try {
+      return new URL(url).hostname.replace(/^www\./, "");
+    } catch (e) {
+      return url;
+    }
+  }
 
   function todayKey() {
     const d = new Date();
@@ -323,10 +577,10 @@
     }
     const key = todayKey();
     if (!raw.date || raw.date !== key) {
-      // new day — compute streak before wiping
       const prevStreak = raw.streak || 0;
       const prevDone = raw.done || {};
-      const prevAll = raw.date && Object.keys(prevDone).length === GAMES.length && Object.values(prevDone).every(Boolean);
+      const prevIds = GAMES.map(g => g.id);
+      const prevAll = raw.date && prevIds.length > 0 && prevIds.every(id => prevDone[id]);
       raw = {
         date: key,
         done: {},
@@ -342,18 +596,24 @@
   }
 
   let state = loadState();
+  let editMode = false;
+  let dragSrcIndex = null;
 
   function formatDate() {
     const d = new Date();
     return d.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" });
   }
 
+  function checkIcon() {
+    return `<svg viewBox="0 0 16 16" fill="none"><path d="M3 8.5L6.2 12L13 4" stroke="#0F1B2A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+  }
+
   function render() {
     document.getElementById("date").textContent = formatDate();
 
-    const doneCount = Object.values(state.done).filter(Boolean).length;
     const total = GAMES.length;
-    const pct = Math.round((doneCount / total) * 100);
+    const doneCount = GAMES.filter(g => state.done[g.id]).length;
+    const pct = total ? Math.round((doneCount / total) * 100) : 0;
 
     document.getElementById("progressFill").style.width = pct + "%";
     document.getElementById("progressLabel").innerHTML =
@@ -362,47 +622,154 @@
     document.getElementById("streak").textContent = state.streak > 0 ? state.streak + " day streak" : "";
 
     const completeMsg = document.getElementById("completeMsg");
-    completeMsg.classList.toggle("show", doneCount === total);
+    completeMsg.classList.toggle("show", total > 0 && doneCount === total);
 
     const manifest = document.getElementById("manifest");
     manifest.innerHTML = "";
 
-    GAMES.forEach((game, i) => {
-      const isDone = !!state.done[game.domain];
-      const row = document.createElement("button");
-      row.className = "row" + (isDone ? " done" : "");
-      row.setAttribute("aria-label", game.name + (isDone ? ", completed" : ""));
+    if (GAMES.length === 0) {
+      manifest.innerHTML = `<div class="empty-state">No games yet — add one above.</div>`;
+      return;
+    }
 
-      const favicon = "https://www.google.com/s2/favicons?sz=64&domain=" + game.domain;
+    GAMES.forEach((game, i) => {
+      const isDone = !!state.done[game.id];
+      const row = document.createElement("div");
+      row.className = "row" + (isDone ? " done" : "") + (editMode ? " edit-mode" : "");
+      row.draggable = editMode;
+      row.dataset.index = i;
+
+      const favicon = "https://www.google.com/s2/favicons?sz=64&domain=" + domainOf(game.url);
 
       row.innerHTML = `
-        <span class="row-index">${String(i + 1).padStart(2, "0")}</span>
-        <img class="row-icon" src="${favicon}" alt="" loading="lazy">
-        <span class="row-body">
-          <span class="row-name">${game.name}</span><br>
-          <span class="row-domain">${game.domain}</span>
-        </span>
-        <span class="row-check">
-          <svg viewBox="0 0 16 16" fill="none">
-            <path d="M3 8.5L6.2 12L13 4" stroke="${getComputedStyle(document.documentElement).getPropertyValue('--ink')}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <span class="drag-handle" aria-hidden="true">
+          <svg viewBox="0 0 16 16" fill="currentColor">
+            <circle cx="5" cy="3" r="1.3"/><circle cx="11" cy="3" r="1.3"/>
+            <circle cx="5" cy="8" r="1.3"/><circle cx="11" cy="8" r="1.3"/>
+            <circle cx="5" cy="13" r="1.3"/><circle cx="11" cy="13" r="1.3"/>
           </svg>
+        </span>
+        <button class="row-tap" type="button" aria-label="${game.name}${isDone ? ', completed' : ''}">
+          <span class="row-index">${String(i + 1).padStart(2, "0")}</span>
+          <img class="row-icon" src="${favicon}" alt="" loading="lazy">
+          <span class="row-body">
+            <span class="row-name">${game.name}</span><br>
+            <span class="row-domain">${domainOf(game.url)}</span>
+          </span>
+        </button>
+        <span class="row-check">${checkIcon()}</span>
+        <span class="row-edit-controls">
+          <span class="order-btns">
+            <button class="order-btn up-btn" type="button" aria-label="Move up" ${i === 0 ? "disabled" : ""}>
+              <svg viewBox="0 0 16 16" fill="none"><path d="M3 10L8 5L13 10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <button class="order-btn down-btn" type="button" aria-label="Move down" ${i === GAMES.length - 1 ? "disabled" : ""}>
+              <svg viewBox="0 0 16 16" fill="none"><path d="M3 6L8 11L13 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+          </span>
+          <button class="remove-btn" type="button" aria-label="Remove ${game.name}">
+            <svg viewBox="0 0 16 16" fill="none"><path d="M4 4L12 12M12 4L4 12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          </button>
         </span>
       `;
 
-      row.addEventListener("click", () => {
+      // Tap to open + check off (disabled while editing)
+      row.querySelector(".row-tap").addEventListener("click", () => {
+        if (editMode) return;
         window.open(game.url, "_blank", "noopener");
-        state.done[game.domain] = true;
+        state.done[game.id] = true;
         saveState(state);
         render();
+      });
+
+      // Reorder via arrows
+      const upBtn = row.querySelector(".up-btn");
+      const downBtn = row.querySelector(".down-btn");
+      upBtn.addEventListener("click", () => { moveGame(i, i - 1); });
+      downBtn.addEventListener("click", () => { moveGame(i, i + 1); });
+
+      // Remove
+      row.querySelector(".remove-btn").addEventListener("click", () => {
+        GAMES.splice(i, 1);
+        saveGames(GAMES);
+        render();
+      });
+
+      // Drag reorder (desktop / trackpad; touch devices use arrows above)
+      row.addEventListener("dragstart", () => {
+        dragSrcIndex = i;
+        row.classList.add("dragging");
+      });
+      row.addEventListener("dragend", () => {
+        row.classList.remove("dragging");
+        dragSrcIndex = null;
+      });
+      row.addEventListener("dragover", (e) => {
+        if (!editMode) return;
+        e.preventDefault();
+      });
+      row.addEventListener("drop", (e) => {
+        e.preventDefault();
+        if (dragSrcIndex === null || dragSrcIndex === i) return;
+        moveGame(dragSrcIndex, i);
       });
 
       manifest.appendChild(row);
     });
   }
 
+  function moveGame(from, to) {
+    if (to < 0 || to >= GAMES.length) return;
+    const [item] = GAMES.splice(from, 1);
+    GAMES.splice(to, 0, item);
+    saveGames(GAMES);
+    render();
+  }
+
   document.getElementById("resetBtn").addEventListener("click", () => {
     state.done = {};
     saveState(state);
+    render();
+  });
+
+  document.getElementById("editToggle").addEventListener("click", () => {
+    editMode = !editMode;
+    document.getElementById("editToggle").classList.toggle("active", editMode);
+    document.getElementById("editToggle").textContent = editMode ? "Done" : "Edit list";
+    document.getElementById("addForm").classList.toggle("show", editMode);
+    render();
+  });
+
+  document.getElementById("addSubmit").addEventListener("click", () => {
+    const nameInput = document.getElementById("addName");
+    const urlInput = document.getElementById("addUrl");
+    const errorEl = document.getElementById("addError");
+    const name = nameInput.value.trim();
+    let url = urlInput.value.trim();
+
+    if (url && !/^https?:\/\//i.test(url)) {
+      url = "https://" + url;
+    }
+
+    let validUrl = false;
+    try {
+      new URL(url);
+      validUrl = true;
+    } catch (e) {
+      validUrl = false;
+    }
+
+    if (!name || !validUrl) {
+      errorEl.classList.add("show");
+      return;
+    }
+    errorEl.classList.remove("show");
+
+    GAMES.push({ id: makeId(url), name, url });
+    saveGames(GAMES);
+
+    nameInput.value = "";
+    urlInput.value = "";
     render();
   });
 
