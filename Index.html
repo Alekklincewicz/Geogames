@@ -1,1 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Daily Geo">
+<title>Daily Geo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0F1B2A;
+    --ink-soft: #16273B;
+    --parchment: #EDE6D6;
+    --parchment-dim: #DDD3BC;
+    --brass: #B8935F;
+    --brass-dim: #8A6D48;
+    --sage: #7A9B7E;
+    --line: rgba(237, 230, 214, 0.14);
+    --text-primary: #EDE6D6;
+    --text-secondary: rgba(237, 230, 214, 0.56);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    background: var(--ink);
+    color: var(--text-primary);
+    font-family: 'Work Sans', sans-serif;
+    -webkit-tap-highlight-color: transparent;
+    overscroll-behavior-y: none;
+  }
+
+  body {
+    min-height: 100vh;
+    min-height: 100dvh;
+    padding: env(safe-area-inset-top, 0) env(safe-area-inset-right, 0) env(safe-area-inset-bottom, 0) env(safe-area-inset-left, 0);
+  }
+
+  .wrap {
+    max-width: 560px;
+    margin: 0 auto;
+    padding: 44px 20px 56px;
+  }
+
+  /* Header */
+  header {
+    margin-bottom: 30px;
+  }
+
+  .eyebrow-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 6px;
+  }
+
+  .date {
+    font-size: 13px;
+    color: var(--text-secondary);
+    letter-spacing: 0.02em;
+  }
+
+  .streak {
+    font-size: 13px;
+    color: var(--brass);
+    font-weight: 500;
+  }
+
+  h1 {
+    font-family: 'Fraunces', serif;
+    font-optical-sizing: auto;
+    font-weight: 500;
+    font-size: 40px;
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+    color: var(--parchment);
+    margin-bottom: 10px;
+  }
+
+  .subhead {
+    font-size: 15px;
+    line-height: 1.5;
+    color: var(--text-secondary);
+    max-width: 42ch;
+  }
+
+  /* Progress */
+  .progress-block {
+    margin: 26px 0 8px;
+  }
+
+  .progress-track {
+    height: 3px;
+    background: var(--line);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-bottom: 8px;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--brass);
+    border-radius: 2px;
+    transition: width 0.45s cubic-bezier(0.65, 0, 0.35, 1);
+    width: 0%;
+  }
+
+  .progress-label {
+    font-size: 12.5px;
+    color: var(--text-secondary);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .progress-label strong {
+    color: var(--parchment);
+    font-weight: 600;
+  }
+
+  /* List */
+  .manifest {
+    margin-top: 34px;
+    border-top: 1px solid var(--line);
+  }
+
+  .row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--line);
+    cursor: pointer;
+    background: none;
+    border-left: none;
+    border-right: none;
+    width: 100%;
+    text-align: left;
+    color: inherit;
+    font: inherit;
+    -webkit-appearance: none;
+    appearance: none;
+    transition: opacity 0.2s ease;
+  }
+
+  .row:active {
+    opacity: 0.6;
+  }
+
+  .row-index {
+    font-family: 'Fraunces', serif;
+    font-size: 14px;
+    color: var(--text-secondary);
+    width: 20px;
+    flex-shrink: 0;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .row.done .row-index {
+    color: var(--sage);
+  }
+
+  .row-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 9px;
+    flex-shrink: 0;
+    object-fit: cover;
+    background: var(--ink-soft);
+  }
+
+  .row-body {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .row-name {
+    font-size: 16.5px;
+    font-weight: 500;
+    color: var(--parchment);
+    margin-bottom: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .row.done .row-name {
+    color: var(--text-secondary);
+    text-decoration: line-through;
+    text-decoration-color: rgba(237, 230, 214, 0.3);
+    text-decoration-thickness: 1px;
+  }
+
+  .row-domain {
+    font-size: 12.5px;
+    color: var(--text-secondary);
+  }
+
+  .row-check {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    border: 1.5px solid var(--line);
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.25s cubic-bezier(0.65, 0, 0.35, 1);
+  }
+
+  .row.done .row-check {
+    background: var(--sage);
+    border-color: var(--sage);
+  }
+
+  .row-check svg {
+    width: 13px;
+    height: 13px;
+    opacity: 0;
+    transform: scale(0.5);
+    transition: all 0.25s cubic-bezier(0.65, 0, 0.35, 1);
+  }
+
+  .row.done .row-check svg {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  /* Footer */
+  .footer {
+    margin-top: 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .reset-btn {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-family: 'Work Sans', sans-serif;
+    font-size: 13px;
+    cursor: pointer;
+    padding: 8px 0;
+  }
+
+  .reset-btn:active {
+    color: var(--brass);
+  }
+
+  .complete-msg {
+    font-family: 'Fraunces', serif;
+    font-size: 13px;
+    font-style: italic;
+    color: var(--sage);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+
+  .complete-msg.show {
+    opacity: 1;
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="eyebrow-row">
+        <span class="date" id="date"></span>
+        <span class="streak" id="streak"></span>
+      </div>
+      <h1>Daily Geo</h1>
+      <p class="subhead">Today's route through the map games. Tap one to open it, come back and check it off.</p>
+    </header>
+
+    <div class="progress-block">
+      <div class="progress-track">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+      <div class="progress-label" id="progressLabel"></div>
+    </div>
+
+    <div class="manifest" id="manifest"></div>
+
+    <div class="footer">
+      <button class="reset-btn" id="resetBtn">Reset today's checks</button>
+      <span class="complete-msg" id="completeMsg">all stamped — see you tomorrow</span>
+    </div>
+  </div>
+
+<script>
+  // ---- Configure your games here ----
+  const GAMES = [
+    { name: "OEC Tradle",  domain: "oec.world",           url: "https://oec.world/en/tradle" },
+    { name: "Worldle",     domain: "worldle.teuteuf.fr",  url: "https://worldle.teuteuf.fr" },
+    { name: "GeoGuessr",   domain: "geoguessr.com",       url: "https://www.geoguessr.com" },
+    { name: "Reborder",    domain: "reborder.app",        url: "https://reborder.app" },
+    { name: "MapTap.gg",   domain: "maptap.gg",           url: "https://maptap.gg" },
+    { name: "travle",      domain: "travle.earth",        url: "https://travle.earth" },
+    { name: "GeoGrid",     domain: "geogridgame.com",     url: "https://www.geogridgame.com" },
+    { name: "EthnoGuessr", domain: "hbd.gg",              url: "https://hbd.gg" }
+  ];
+
+  const STORAGE_KEY = "dailygeo_progress";
+
+  function todayKey() {
+    const d = new Date();
+    return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+  }
+
+  function loadState() {
+    let raw;
+    try {
+      raw = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
+    } catch (e) {
+      raw = {};
+    }
+    const key = todayKey();
+    if (!raw.date || raw.date !== key) {
+      // new day — compute streak before wiping
+      const prevStreak = raw.streak || 0;
+      const prevDone = raw.done || {};
+      const prevAll = raw.date && Object.keys(prevDone).length === GAMES.length && Object.values(prevDone).every(Boolean);
+      raw = {
+        date: key,
+        done: {},
+        streak: prevAll ? prevStreak : 0
+      };
+      saveState(raw);
+    }
+    return raw;
+  }
+
+  function saveState(state) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  }
+
+  let state = loadState();
+
+  function formatDate() {
+    const d = new Date();
+    return d.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" });
+  }
+
+  function render() {
+    document.getElementById("date").textContent = formatDate();
+
+    const doneCount = Object.values(state.done).filter(Boolean).length;
+    const total = GAMES.length;
+    const pct = Math.round((doneCount / total) * 100);
+
+    document.getElementById("progressFill").style.width = pct + "%";
+    document.getElementById("progressLabel").innerHTML =
+      "<strong>" + doneCount + "</strong> of " + total + " today";
+
+    document.getElementById("streak").textContent = state.streak > 0 ? state.streak + " day streak" : "";
+
+    const completeMsg = document.getElementById("completeMsg");
+    completeMsg.classList.toggle("show", doneCount === total);
+
+    const manifest = document.getElementById("manifest");
+    manifest.innerHTML = "";
+
+    GAMES.forEach((game, i) => {
+      const isDone = !!state.done[game.domain];
+      const row = document.createElement("button");
+      row.className = "row" + (isDone ? " done" : "");
+      row.setAttribute("aria-label", game.name + (isDone ? ", completed" : ""));
+
+      const favicon = "https://www.google.com/s2/favicons?sz=64&domain=" + game.domain;
+
+      row.innerHTML = `
+        <span class="row-index">${String(i + 1).padStart(2, "0")}</span>
+        <img class="row-icon" src="${favicon}" alt="" loading="lazy">
+        <span class="row-body">
+          <span class="row-name">${game.name}</span><br>
+          <span class="row-domain">${game.domain}</span>
+        </span>
+        <span class="row-check">
+          <svg viewBox="0 0 16 16" fill="none">
+            <path d="M3 8.5L6.2 12L13 4" stroke="${getComputedStyle(document.documentElement).getPropertyValue('--ink')}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </span>
+      `;
+
+      row.addEventListener("click", () => {
+        window.open(game.url, "_blank", "noopener");
+        state.done[game.domain] = true;
+        saveState(state);
+        render();
+      });
+
+      manifest.appendChild(row);
+    });
+  }
+
+  document.getElementById("resetBtn").addEventListener("click", () => {
+    state.done = {};
+    saveState(state);
+    render();
+  });
+
+  render();
+</script>
+</body>
+</html>
 
